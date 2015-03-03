@@ -55,6 +55,16 @@
           </exclusions>
       </dependency>
       <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-mapper-asl</artifactId>
+        <version>1.8.8</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-core-asl</artifactId>
+        <version>1.8.8</version>
+      </dependency>
+      <dependency>
           <groupId>org.apache.pig</groupId>
           <artifactId>pig</artifactId>
           <version>0.12.1</version>
