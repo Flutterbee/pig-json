@@ -38,8 +38,8 @@ public class TestJsonLoader {
 
             Util.createLocalInputFile(dataDir + scalarInput,
                 new String[] {
-                    "{ \"i\": 1, \"l\": 10, \"f\": 2.718, \"d\": 3.1415, \"b\": \"17\", \"c\": \"aardvark\" }",
-                    "{ \"i\": 2, \"l\": 100, \"f\": 1.234, \"d\": 3.3333, \"b\": null, \"c\": \"17.0\" }"
+                    "{ \"i\": 1, \"l\": 10, \"f\": 2.718, \"d\": 3.1415, \"b\": \"17\", \"c\": \"aardvark\", \"bl\": true}",
+                    "{ \"i\": 2, \"l\": 100, \"f\": 1.234, \"d\": 3.3333, \"b\": null, \"c\": \"17.0\", \"bl\": false }"
             });
 
             Util.createLocalInputFile(dataDir + complexInput,
@@ -75,7 +75,7 @@ public class TestJsonLoader {
     @Test
     public void scalarTypes() throws IOException, ParseException {
         String input = scalarInput;
-        String schema = "i: int, l: long, f: float, d: double, b: bytearray, c: chararray";
+        String schema = "i: int, l: long, f: float, d: double, b: bytearray, c: chararray, bl: boolean";
 
         pig.registerQuery(
             "data = load '" + dataDir + input + "' " +
@@ -84,8 +84,8 @@ public class TestJsonLoader {
 
         Iterator<Tuple> data = pig.openIterator("data");
         String[] expected = {
-            "(1,10,2.718,3.1415,17,aardvark)",
-            "(2,100,1.234,3.3333,,17.0)"
+            "(1,10,2.718,3.1415,17,aardvark,true)",
+            "(2,100,1.234,3.3333,,17.0,false)"
         };
 
         Assert.assertEquals(StringUtils.join(expected, "\n"), StringUtils.join(data, "\n"));
@@ -154,7 +154,7 @@ public class TestJsonLoader {
     @Test
     public void scalarTypeCoercion() throws IOException, ParseException {
         String input = scalarInput;
-        String schema = "i: float, l: double, f: int, d: (a: int, b: int), b: int, c: float";
+        String schema = "i: float, l: double, f: int, d: (a: int, b: int), b: int, c: float, bl: int";
 
         pig.registerQuery(
             "data = load '" + dataDir + input + "' " +
@@ -163,8 +163,8 @@ public class TestJsonLoader {
 
         Iterator<Tuple> data = pig.openIterator("data");
         String[] expected = {
-            "(1.0,10.0,2,,17,)",
-            "(2.0,100.0,1,,,17.0)"
+            "(1.0,10.0,2,,17,,)",
+            "(2.0,100.0,1,,,17.0,)"
         };
 
         Assert.assertEquals(StringUtils.join(expected, "\n"), StringUtils.join(data, "\n"));
@@ -272,8 +272,8 @@ public class TestJsonLoader {
 
         Iterator<Tuple> data = pig.openIterator("data");
         String[] expected = {
-            "([f#2.718,l#10,d#3.1415,b#17,c#aardvark,i#1])",
-            "([f#1.234,l#100,d#3.3333,b#,c#17.0,i#2])"
+            "([f#2.718,d#3.1415,b#17,c#aardvark,bl#true,l#10,i#1])",
+            "([f#1.234,d#3.3333,b#,c#17.0,bl#false,l#100,i#2])"
         };
 
         Assert.assertEquals(StringUtils.join(expected, "\n"), StringUtils.join(data, "\n"));
@@ -350,7 +350,7 @@ public class TestJsonLoader {
     @Test
     public void newlinesInSchema() throws IOException, ParseException {
         String input = scalarInput;
-        String schema = "\n i: int, \n\n l: long, \r\n f: float, \n\n d: double, \r\n b: bytearray, \n\n c: chararray";
+        String schema = "\n i: int, \n\n l: long, \r\n f: float, \n\n d: double, \r\n b: bytearray, \n\n c: chararray,\n\n\nbl:\n boolean";
 
         pig.registerQuery(
             "data = load '" + dataDir + input + "' " +
@@ -359,8 +359,8 @@ public class TestJsonLoader {
 
         Iterator<Tuple> data = pig.openIterator("data");
         String[] expected = {
-            "(1,10,2.718,3.1415,17,aardvark)",
-            "(2,100,1.234,3.3333,,17.0)"
+            "(1,10,2.718,3.1415,17,aardvark,true)",
+            "(2,100,1.234,3.3333,,17.0,false)"
         };
 
         Assert.assertEquals(StringUtils.join(expected, "\n"), StringUtils.join(data, "\n"));
@@ -369,7 +369,7 @@ public class TestJsonLoader {
     @Test
     public void pushProjection() throws IOException, ParseException {
         String input = scalarInput;
-        String schema = "i: int, l: long, f: float, d: double, b: bytearray, c: chararray";
+        String schema = "i: int, l: long, f: float, d: double, b: bytearray, c: chararray, bl:boolean";
 
         pig.registerQuery(
             "data = load '" + dataDir + input + "' " +
