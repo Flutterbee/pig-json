@@ -471,6 +471,15 @@ public class JsonLoader extends LoadFunc implements LoadMetadata, LoadPushDown {
                 if (tok == JsonToken.VALUE_STRING) return Double.parseDouble(p.getText());
                 return p.getDoubleValue();
 
+            case DataType.BOOLEAN:
+                if (tok == JsonToken.VALUE_NULL) return null;
+                if (!tok.isScalarValue()) {
+                    throw new IllegalArgumentException(
+                        "Bad boolean field: expected scalar value but found non-scalar token " + p.getText());
+                }
+                if (tok == JsonToken.VALUE_STRING) return Boolean.parseBoolean(p.getText());
+                return p.getBooleanValue();
+
             case DataType.BYTEARRAY:
                 String s = readFieldAsString(text, p, field);
                 if (s != null) {
